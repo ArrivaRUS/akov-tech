@@ -1,0 +1,12 @@
+{
+  "name": "akov-tech",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Placeholder site for akov.tech",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
