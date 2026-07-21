@@ -226,7 +226,7 @@ function renderIndex(theme) {
                background: none; border: 1px solid var(--border); color: var(--fg);
                padding: 6px 9px; cursor: pointer; }
   .theme-btn:hover { background: var(--box); }
-  .cta { border: 2px solid var(--border); background: var(--box); padding: 12px 16px; margin: 18px 0 26px; }
+  .cta { border: 1px solid var(--border); background: var(--box); padding: 12px 16px; margin: 18px 0 26px; }
   .cta a { font-weight: bold; }
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
   @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
@@ -252,7 +252,8 @@ function renderIndex(theme) {
     <p class="social"><span>Telegram:</span> ${config.columns.map(c => `<a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`).join(' · ')}
       <span>· YouTube:</span> ${config.columns.map(c => c.youtube
         ? `<a href="${escapeHtml(c.youtube)}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`
-        : `<span>${escapeHtml(c.title)} скоро</span>`).join(' · ')}</p>
+        : `<span>${escapeHtml(c.title)} скоро</span>`).join(' · ')}
+      ${o.community ? `<span>· Сообщество:</span> <a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${escapeHtml(o.community.title)}</a>` : ''}</p>
   </div>
   <button class="theme-btn" id="themeBtn" type="button" title="Переключить тему" aria-label="Переключить тему"></button>
 </header>
