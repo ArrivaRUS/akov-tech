@@ -272,7 +272,7 @@ function renderIndex(theme) {
   const av = assetVer('avatar.png');
   const cols = config.columns.map(renderColumn).join('\n');
   const links = [
-    ...config.columns.map(c => `<li><a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a> — телеграм-канал: ${escapeHtml(c.about)}</li>`),
+    ...config.columns.map(c => `<li><a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a> — <span class="lbl-full">телеграм-канал:</span><span class="lbl-short">Т-канал:</span> ${escapeHtml(c.about)}</li>`),
     ...config.columns.filter(c => c.youtube).map(c => `<li><a href="${escapeHtml(c.youtube)}" target="_blank" rel="noopener">${escapeHtml(c.title)} на YouTube</a> — видео: ${escapeHtml(c.about)}</li>`),
     ...(o.community ? [`<li><a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${zeroize(o.community.titleHtml || escapeHtml(o.community.title))}</a> — ${escapeHtml(o.community.note)}</li>`] : []),
     `<li><a href="${escapeHtml(o.github)}" target="_blank" rel="noopener">GitHub</a> — код и пет-проекты</li>`,
@@ -320,7 +320,12 @@ function renderIndex(theme) {
   .cta { border: 1px solid var(--border); background: var(--box); padding: 12px 16px; margin: 18px 0 26px; }
   .cta a { font-weight: bold; }
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
-  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .lbl-short { display: none; }
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr; }
+    .lbl-full { display: none; }
+    .lbl-short { display: inline; }
+  }
   .clogo { width: 50px; height: 50px; border-radius: 50%; margin-right: 10px; vertical-align: -15px; }
   .z0 { width: .6em; height: .77em; display: inline-block; vertical-align: -0.06em; margin: 0 .03em; }
   .about { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
