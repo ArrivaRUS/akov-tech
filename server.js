@@ -284,7 +284,9 @@ function renderIndex(theme) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapeHtml(o.name)} — akov.tech</title>
 <meta name="description" content="${escapeHtml(o.tagline)}">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎙️</text></svg>">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=${assetVer('favicon-32.png')}">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png?v=${assetVer('favicon-16.png')}">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=${assetVer('apple-touch-icon.png')}">
 <style>
   :root {
     --bg: #fff; --fg: #000; --link: #0000EE; --visited: #551A8B;
@@ -391,6 +393,8 @@ function renderCv() {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Карьера и достижения — akov.tech</title>
 <meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <style>
   body { margin: 0; min-height: 100svh; display: flex; align-items: center; justify-content: center; text-align: center;
          background: radial-gradient(1200px 600px at 50% -10%, #1b2540 0%, #0b0f17 60%);
@@ -443,6 +447,7 @@ http.createServer((req, res) => {
   const p = url.pathname;
 
   if (p === '/health') return send(res, 200, JSON.stringify({ ok: true }), 'application/json');
+  if (p === '/favicon.ico') return serveAsset(req, res, '/assets/favicon-32.png');
   if (p === '/robots.txt') {
     return send(res, 200, PREVIEW_KEY ? 'User-agent: *\nDisallow: /\n' : 'User-agent: *\nAllow: /\n', 'text/plain');
   }
