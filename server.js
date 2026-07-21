@@ -334,6 +334,8 @@ function renderIndex(theme) {
     .avatar { float: left; margin: 0 16px 8px 0; }
     h1, .tagline { padding-right: 46px; } /* не заезжать под кнопку темы */
     .tagline2, .social { padding-right: 0; clear: left; margin-top: 10px; }
+    .sgroup { display: block; margin-bottom: 2px; }
+    .sep { display: none; }
     .theme-btn { position: absolute; top: 0; right: 0; }
   }
   .clogo { width: 50px; height: 50px; border-radius: 50%; margin-right: 10px; vertical-align: -15px; }
@@ -367,11 +369,9 @@ function renderIndex(theme) {
     <h1>${escapeHtml(o.name)}</h1>
     <p class="tagline">${zeroize(o.taglineHtml1 || escapeHtml(o.tagline))}</p>
     ${o.taglineHtml2 ? `<p class="tagline tagline2">${zeroize(o.taglineHtml2)}</p>` : ''}
-    <p class="social"><span>Telegram:</span> ${config.columns.map(c => `<a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`).join(' · ')}
-      <span>· YouTube:</span> ${config.columns.map(c => c.youtube
+    <p class="social"><span class="sgroup"><span>Telegram:</span> ${config.columns.map(c => `<a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`).join(' · ')}</span><span class="sep"> · </span><span class="sgroup"><span>YouTube:</span> ${config.columns.map(c => c.youtube
         ? `<a href="${escapeHtml(c.youtube)}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`
-        : `<span>${escapeHtml(c.title)} скоро</span>`).join(' · ')}
-      ${o.community ? `<span>· Сообщество:</span> <a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${zeroize(o.community.titleHtml || escapeHtml(o.community.title))}</a>` : ''}</p>
+        : `<span>${escapeHtml(c.title)} скоро</span>`).join(' · ')}</span>${o.community ? `<span class="sep"> · </span><span class="sgroup"><span>Сообщество:</span> <a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${zeroize(o.community.titleHtml || escapeHtml(o.community.title))}</a></span>` : ''}</p>
   </div>
   <button class="theme-btn" id="themeBtn" type="button" title="Переключить тему" aria-label="Переключить тему"></button>
 </header>
