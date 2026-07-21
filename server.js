@@ -437,7 +437,9 @@ http.createServer((req, res) => {
   const p = url.pathname;
 
   if (p === '/health') return send(res, 200, JSON.stringify({ ok: true }), 'application/json');
-  if (p === '/robots.txt' && PREVIEW_KEY) return send(res, 200, 'User-agent: *\nDisallow: /\n', 'text/plain');
+  if (p === '/robots.txt') {
+    return send(res, 200, PREVIEW_KEY ? 'User-agent: *\nDisallow: /\n' : 'User-agent: *\nAllow: /\n', 'text/plain');
+  }
 
   // Закрытый предпросмотр: без ключа все видят заглушку.
   if (PREVIEW_KEY) {
