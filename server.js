@@ -333,6 +333,12 @@ function renderIndex(theme) {
   .feed li { margin-bottom: 8px; }
   .date { color: var(--muted); font-size: 12px; display: block; }
   .muted { color: var(--muted); font-size: 13px; }
+  .contact { margin: 40px 0 6px; text-align: center; }
+  .mailbtn { display: inline-block; border: 1px solid var(--border); padding: 9px 18px;
+             text-decoration: none; color: var(--fg); font-weight: bold; }
+  .mailbtn:visited { color: var(--fg); }
+  .mailbtn:hover { background: var(--box); }
+  .mailaddr { display: block; margin-top: 8px; font-size: 13px; color: var(--muted); }
   .links { margin-top: 44px; padding-top: 18px; border-top: 1px solid var(--border); }
   .links ul { list-style: none; padding: 0; }
   .links li { margin-bottom: 5px; }
@@ -361,6 +367,10 @@ ${cols}
   <h3>Ссылки</h3>
   <ul>${links}</ul>
 </div>
+${o.email ? `<div class="contact">
+  <a class="mailbtn" href="mailto:${escapeHtml(o.email)}">✉ Написать мне</a>
+  <span class="mailaddr">${escapeHtml(o.email)}</span>
+</div>` : ''}
 <footer>© ${new Date().getFullYear()} akov.tech</footer>
 <script>
 (function () {
