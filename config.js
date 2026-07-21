@@ -4,7 +4,8 @@ module.exports = {
   owner: {
     name: 'Алексей Ковалев',
     tagline: 'AI-native CPO, ИИ-инфлюенсер. Основатель сообщества vibec0ding.ru. Рассказываю про ИИ, бизнес, продуктовое управление и инвестиции простым языком.',
-    taglineHtml: 'AI-native CPO, ИИ-инфлюенсер. Основатель сообщества vibec<span class="zero">0</span>ding.ru.<br>Рассказываю про ИИ, бизнес, продуктовое управление и инвестиции простым языком.',
+    taglineHtml1: 'AI-native CPO, ИИ-инфлюенсер. Основатель сообщества vibec<span class="zero">0</span>ding.ru.',
+    taglineHtml2: 'Рассказываю про ИИ, бизнес, продуктовое управление и инвестиции простым языком.',
     github: 'https://github.com/ArrivaRUS',
     email: 'ArrivaRUS@gmail.com',
     community: {

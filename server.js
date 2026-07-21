@@ -331,7 +331,9 @@ function renderIndex(theme) {
     .lbl-full { display: none; }
     .lbl-short { display: inline; }
     header { display: block; position: relative; }
-    .avatar { display: block; margin-bottom: 14px; }
+    .avatar { float: left; margin: 0 16px 8px 0; }
+    h1, .tagline { padding-right: 46px; } /* не заезжать под кнопку темы */
+    .tagline2, .social { padding-right: 0; clear: left; margin-top: 10px; }
     .theme-btn { position: absolute; top: 0; right: 0; }
   }
   .clogo { width: 50px; height: 50px; border-radius: 50%; margin-right: 10px; vertical-align: -15px; }
@@ -363,7 +365,8 @@ function renderIndex(theme) {
   <img class="avatar" src="/assets/avatar.png?v=${av}" alt="${escapeHtml(o.name)}">
   <div>
     <h1>${escapeHtml(o.name)}</h1>
-    <p class="tagline">${zeroize(o.taglineHtml || escapeHtml(o.tagline))}</p>
+    <p class="tagline">${zeroize(o.taglineHtml1 || escapeHtml(o.tagline))}</p>
+    ${o.taglineHtml2 ? `<p class="tagline tagline2">${zeroize(o.taglineHtml2)}</p>` : ''}
     <p class="social"><span>Telegram:</span> ${config.columns.map(c => `<a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`).join(' · ')}
       <span>· YouTube:</span> ${config.columns.map(c => c.youtube
         ? `<a href="${escapeHtml(c.youtube)}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`
