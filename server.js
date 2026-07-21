@@ -131,24 +131,50 @@ function parseYtFeed(xml) {
   });
 }
 
-// Скрейп вкладки «Видео» — запасной путь, когда RSS у свежего канала 404.
-async function scrapeYtChannelPage(channelId) {
-  const html = await fetchText(`https://www.youtube.com/channel/${channelId}/videos`);
+// Вкладка «Видео» через внутренний API YouTube (innertube) — тот же путь,
+// каким ходит обычный веб-клиент; запасной вариант, когда RSS у канала 404.
+async function browseYtChannel(channelId) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 12000);
+  let json;
+  try {
+    const res = await fetch('https://www.youtube.com/youtubei/v1/browse?prettyPrint=false', {
+      method: 'POST',
+      signal: ctrl.signal,
+      headers: { 'Content-Type': 'application/json', 'User-Agent': 'Mozilla/5.0', Cookie: 'SOCS=CAI' },
+      body: JSON.stringify({
+        context: { client: { clientName: 'WEB', clientVersion: '2.20240701.00.00', hl: 'ru', gl: 'RU' } },
+        browseId: channelId,
+        params: 'EgZ2aWRlb3PyBgQKAjoA', // вкладка «Видео»
+      }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status} for innertube browse`);
+    json = await res.text();
+  } finally {
+    clearTimeout(t);
+  }
+  // Два поколения разметки: старый videoRenderer и новый lockupViewModel.
   const out = [];
   const seen = new Set();
-  for (const chunk of html.split('"videoRenderer":{"videoId":"').slice(1)) {
-    const id = chunk.slice(0, chunk.indexOf('"'));
-    if (!/^[\w-]{6,}$/.test(id) || seen.has(id)) continue;
-    seen.add(id);
-    const t = chunk.slice(0, 3000).match(/"title":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"/);
-    out.push({
-      id,
-      title: t ? JSON.parse(`"${t[1]}"`) : '',
-      url: `https://www.youtube.com/watch?v=${id}`,
-      date: null,
-    });
-    if (out.length >= config.limits.ytVideos) break;
-  }
+  const TITLE_RE = /"title":\{(?:"runs":\[\{"text":|"content":)"((?:[^"\\]|\\.)*)"/;
+  const collect = (chunks, idRe) => {
+    for (const chunk of chunks) {
+      if (out.length >= config.limits.ytVideos) return;
+      const win = chunk.slice(0, 15000);
+      const idm = win.match(idRe);
+      if (!idm || !/^[\w-]{11}$/.test(idm[1]) || seen.has(idm[1])) continue;
+      seen.add(idm[1]);
+      const t2 = win.match(TITLE_RE);
+      out.push({
+        id: idm[1],
+        title: t2 ? JSON.parse(`"${t2[1]}"`) : '',
+        url: `https://www.youtube.com/watch?v=${idm[1]}`,
+        date: null,
+      });
+    }
+  };
+  collect(json.split('"videoRenderer":{').slice(1), /"videoId":"([\w-]{11})"/);
+  if (!out.length) collect(json.split('"lockupViewModel":{').slice(1), /(?:"contentId":"|\/vi\/)([\w-]{11})["/]/);
   return out;
 }
 
@@ -169,12 +195,12 @@ async function fetchYtVideos(youtube, prev) {
     }
   }
   try {
-    const scraped = await scrapeYtChannelPage(channelId);
-    d.scrape = `ok:${scraped.length}`;
-    if (scraped.length) return scraped;
+    const browsed = await browseYtChannel(channelId);
+    d.browse = `ok:${browsed.length}`;
+    if (browsed.length) return browsed;
   } catch (err) {
-    d.scrape = err.message.slice(0, 60);
-    console.error('yt page scrape failed:', err.message);
+    d.browse = err.message.slice(0, 60);
+    console.error('yt browse failed:', err.message);
   }
   return prev && prev.length ? prev : [];
 }
