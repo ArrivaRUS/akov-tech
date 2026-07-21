@@ -165,7 +165,7 @@ function renderColumn(col) {
   </section>`;
 }
 
-function renderIndex() {
+function renderIndex(theme) {
   const o = config.owner;
   const cols = config.columns.map(renderColumn).join('\n');
   const links = [
@@ -174,7 +174,7 @@ function renderIndex() {
     `<li><a href="${escapeHtml(o.github)}" target="_blank" rel="noopener">GitHub</a> — код и пет-проекты</li>`,
   ].join('');
   return `<!doctype html>
-<html lang="ru">
+<html lang="ru"${theme ? ` data-theme="${theme}"` : ''}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -182,32 +182,50 @@ function renderIndex() {
 <meta name="description" content="${escapeHtml(o.tagline)}">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎙️</text></svg>">
 <style>
-  body { font-family: monospace; max-width: 1100px; margin: 0 auto; padding: 20px; line-height: 1.6; background: #fff; color: #000; }
-  a { color: #0000EE; text-decoration: underline; }
-  a:visited { color: #551A8B; }
+  :root {
+    --bg: #fff; --fg: #000; --link: #0000EE; --visited: #551A8B;
+    --muted: #666; --border: #000; --box: #f5f5f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111; --fg: #e8e8e8; --link: #7db4ff; --visited: #c8a8f0;
+      --muted: #909090; --border: #e8e8e8; --box: #1c1c1c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111; --fg: #e8e8e8; --link: #7db4ff; --visited: #c8a8f0;
+    --muted: #909090; --border: #e8e8e8; --box: #1c1c1c;
+  }
+  body { font-family: monospace; max-width: 1100px; margin: 0 auto; padding: 20px; line-height: 1.6; background: var(--bg); color: var(--fg); }
+  a { color: var(--link); text-decoration: underline; }
+  a:visited { color: var(--visited); }
   h1 { font-size: 24px; margin: 0 0 4px; line-height: 1.3; }
   h2 { font-size: 18px; margin: 0 0 2px; }
   h3 { font-size: 14px; margin: 22px 0 6px; }
   header { display: flex; gap: 18px; align-items: center; margin-bottom: 8px; }
   .avatar { width: 76px; height: 76px; border-radius: 50%; flex-shrink: 0; }
-  .tagline { color: #666; margin: 0 0 6px; }
+  .tagline { color: var(--muted); margin: 0 0 6px; }
   .social { font-size: 13px; margin: 0; }
-  .social span { color: #666; }
-  .cta { border: 2px solid #000; background: #f5f5f5; padding: 12px 16px; margin: 18px 0 26px; }
+  .social span { color: var(--muted); }
+  .theme-btn { margin-left: auto; align-self: flex-start; font: inherit; font-size: 16px; line-height: 1;
+               background: none; border: 1px solid var(--border); color: var(--fg);
+               padding: 6px 9px; cursor: pointer; }
+  .theme-btn:hover { background: var(--box); }
+  .cta { border: 2px solid var(--border); background: var(--box); padding: 12px 16px; margin: 18px 0 26px; }
   .cta a { font-weight: bold; }
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
   @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
   .mark { display: inline-block; width: 10px; height: 10px; margin-right: 8px; }
-  .about { color: #666; font-size: 13px; margin: 0 0 4px; }
+  .about { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
   .chan { font-size: 12px; font-weight: normal; margin-left: 6px; }
   .feed { list-style: none; padding: 0; margin: 6px 0 0; }
   .feed li { margin-bottom: 8px; }
-  .date { color: #666; font-size: 12px; display: block; }
-  .muted { color: #666; font-size: 13px; }
-  .links { margin-top: 44px; padding-top: 18px; border-top: 1px solid #000; }
+  .date { color: var(--muted); font-size: 12px; display: block; }
+  .muted { color: var(--muted); font-size: 13px; }
+  .links { margin-top: 44px; padding-top: 18px; border-top: 1px solid var(--border); }
   .links ul { list-style: none; padding: 0; }
   .links li { margin-bottom: 5px; }
-  footer { margin-top: 30px; text-align: center; font-size: 13px; color: #666; }
+  footer { margin-top: 30px; text-align: center; font-size: 13px; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -218,6 +236,7 @@ function renderIndex() {
     <p class="tagline">${escapeHtml(o.tagline)}</p>
     <p class="social"><span>Telegram:</span> ${config.columns.map(c => `<a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`).join(' · ')} <span>· YouTube: скоро</span></p>
   </div>
+  <button class="theme-btn" id="themeBtn" type="button" title="Переключить тему" aria-label="Переключить тему"></button>
 </header>
 <div class="cta">→ <a href="/cv">Карьера и достижения</a> — где работал и что сделал: обо мне для работодателей и партнёров</div>
 <main class="grid">
@@ -228,6 +247,25 @@ ${cols}
   <ul>${links}</ul>
 </div>
 <footer>© ${new Date().getFullYear()} akov.tech</footer>
+<script>
+(function () {
+  var btn = document.getElementById('themeBtn');
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  function effective() {
+    var manual = document.documentElement.getAttribute('data-theme');
+    return manual || (mq.matches ? 'dark' : 'light');
+  }
+  function paint() { btn.textContent = effective() === 'dark' ? '☀' : '☾'; }
+  btn.addEventListener('click', function () {
+    var next = effective() === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    document.cookie = 'theme=' + next + '; Path=/; Max-Age=31536000; SameSite=Lax';
+    paint();
+  });
+  mq.addEventListener('change', paint); // ОС сменила тему, а ручного выбора нет
+  paint();
+})();
+</script>
 </body>
 </html>`;
 }
@@ -308,7 +346,10 @@ http.createServer((req, res) => {
     }
   }
 
-  if (p === '/') return send(res, 200, renderIndex());
+  if (p === '/') {
+    const t = parseCookies(req).theme;
+    return send(res, 200, renderIndex(t === 'dark' || t === 'light' ? t : null));
+  }
   if (p === '/cv') return send(res, 200, renderCv());
   if (p.startsWith('/assets/')) return serveAsset(req, res, p);
   if (p === '/data.json') {
