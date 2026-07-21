@@ -162,9 +162,10 @@ function renderColumn(col) {
     ? `<h3>YouTube <a class="chan" href="${escapeHtml(col.youtube)}" target="_blank" rel="noopener">канал →</a></h3>
        ${renderList(yt, 'видео загружаются…', 'видео скоро появятся')}`
     : `<h3>YouTube</h3><p class="muted">канал скоро появится</p>`;
+  const logo = `logo-${col.slug}.jpg`;
   return `
   <section class="col" id="${col.slug}">
-    <h2><span class="mark" style="background:${col.accent}"></span>${escapeHtml(col.title)}</h2>
+    <h2><img class="clogo" src="/assets/${logo}?v=${assetVer(logo)}" alt="">${escapeHtml(col.title)}</h2>
     <p class="about">${escapeHtml(col.about)}</p>
     ${ytBlock}
     <h3>Telegram <a class="chan" href="${tgUrl}" target="_blank" rel="noopener">канал →</a></h3>
@@ -172,14 +173,14 @@ function renderColumn(col) {
   </section>`;
 }
 
-function avatarVersion() {
-  try { return Math.round(fs.statSync(path.join(__dirname, 'assets', 'avatar.png')).mtimeMs); }
+function assetVer(name) {
+  try { return Math.round(fs.statSync(path.join(__dirname, 'assets', name)).mtimeMs); }
   catch { return 0; }
 }
 
 function renderIndex(theme) {
   const o = config.owner;
-  const av = avatarVersion();
+  const av = assetVer('avatar.png');
   const cols = config.columns.map(renderColumn).join('\n');
   const links = [
     ...config.columns.map(c => `<li><a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a> — телеграм-канал: ${escapeHtml(c.about)}</li>`),
@@ -229,7 +230,7 @@ function renderIndex(theme) {
   .cta a { font-weight: bold; }
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
   @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-  .mark { display: inline-block; width: 10px; height: 10px; margin-right: 8px; }
+  .clogo { width: 30px; height: 30px; border-radius: 50%; margin-right: 9px; vertical-align: -7px; }
   .about { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
   .chan { font-size: 12px; font-weight: normal; margin-left: 6px; }
   .feed { list-style: none; padding: 0; margin: 6px 0 0; }
