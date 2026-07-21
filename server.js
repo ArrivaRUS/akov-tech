@@ -331,7 +331,7 @@ function renderIndex(theme) {
   .vcap { font-size: 12px; color: var(--muted); margin: 2px 0 0; }
   .feed { list-style: none; padding: 0; margin: 6px 0 0; }
   .feed li { margin-bottom: 8px; }
-  .date { color: var(--muted); font-size: 12px; display: block; }
+  .date { color: var(--muted); font-size: 12px; margin-right: 8px; white-space: nowrap; }
   .muted { color: var(--muted); font-size: 13px; }
   .contact { margin: 40px 0 6px; text-align: center; }
   .mailbtn { display: inline-block; border: 1px solid var(--border); padding: 9px 18px;
