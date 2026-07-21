@@ -2,7 +2,7 @@
 // YouTube: заполнить channel (URL или @handle) — channelId резолвится автоматически.
 module.exports = {
   owner: {
-    name: 'Александр Ковалев',
+    name: 'Алексей Ковалев',
     tagline: 'Продакт и вайб-кодер. Пишу и снимаю про технологии и AI, инвестиции и жизнь.',
     github: 'https://github.com/ArrivaRUS',
   },

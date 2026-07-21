@@ -165,8 +165,14 @@ function renderColumn(col) {
   </section>`;
 }
 
+function avatarVersion() {
+  try { return Math.round(fs.statSync(path.join(__dirname, 'assets', 'avatar.png')).mtimeMs); }
+  catch { return 0; }
+}
+
 function renderIndex(theme) {
   const o = config.owner;
+  const av = avatarVersion();
   const cols = config.columns.map(renderColumn).join('\n');
   const links = [
     ...config.columns.map(c => `<li><a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a> — телеграм-канал: ${escapeHtml(c.about)}</li>`),
@@ -203,7 +209,7 @@ function renderIndex(theme) {
   h2 { font-size: 18px; margin: 0 0 2px; }
   h3 { font-size: 14px; margin: 22px 0 6px; }
   header { display: flex; gap: 18px; align-items: center; margin-bottom: 8px; }
-  .avatar { width: 76px; height: 76px; border-radius: 50%; flex-shrink: 0; }
+  .avatar { width: 76px; height: 76px; border-radius: 50%; flex-shrink: 0; border: 1px solid var(--border); object-fit: cover; }
   .tagline { color: var(--muted); margin: 0 0 6px; }
   .social { font-size: 13px; margin: 0; }
   .social span { color: var(--muted); }
@@ -230,7 +236,7 @@ function renderIndex(theme) {
 </head>
 <body>
 <header>
-  <img class="avatar" src="/assets/avatar.png" alt="${escapeHtml(o.name)}">
+  <img class="avatar" src="/assets/avatar.png?v=${av}" alt="${escapeHtml(o.name)}">
   <div>
     <h1>${escapeHtml(o.name)}</h1>
     <p class="tagline">${escapeHtml(o.tagline)}</p>
