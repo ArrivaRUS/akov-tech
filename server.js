@@ -338,7 +338,7 @@ function renderIndex(theme) {
              text-decoration: none; color: var(--fg); font-weight: bold; }
   .mailbtn:visited { color: var(--fg); }
   .mailbtn:hover { background: var(--box); }
-  .mailaddr { display: block; margin-top: 8px; font-size: 13px; color: var(--muted); }
+  .mailico { width: 20px; height: 20px; vertical-align: -5px; margin-right: 9px; }
   .links { margin-top: 44px; padding-top: 18px; border-top: 1px solid var(--border); }
   .links ul { list-style: none; padding: 0; }
   .links li { margin-bottom: 5px; }
@@ -368,8 +368,7 @@ ${cols}
   <ul>${links}</ul>
 </div>
 ${o.email ? `<div class="contact">
-  <a class="mailbtn" href="mailto:${escapeHtml(o.email)}">✉ Написать мне</a>
-  <span class="mailaddr">${escapeHtml(o.email)}</span>
+  <a class="mailbtn" href="mailto:${escapeHtml(o.email)}"><img class="mailico" src="/assets/favicon-32.png?v=${assetVer('favicon-32.png')}" alt="">Написать мне</a>
 </div>` : ''}
 <footer>© ${new Date().getFullYear()} akov.tech</footer>
 <script>
