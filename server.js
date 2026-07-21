@@ -120,17 +120,7 @@ async function resolveChannelId(youtube) {
   return m ? m[1] : null;
 }
 
-async function fetchYtVideos(youtube, prev) {
-  const channelId = await resolveChannelId(youtube);
-  if (!channelId) return null;
-  let xml;
-  try {
-    xml = await fetchText(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`);
-  } catch (err) {
-    // У свежих каналов лента то появляется, то 404: не затираем уже полученное.
-    if (String(err.message).includes('HTTP 404')) return prev && prev.length ? prev : [];
-    throw err;
-  }
+function parseYtFeed(xml) {
   const entries = xml.match(/<entry>[\s\S]*?<\/entry>/g) || [];
   return entries.slice(0, config.limits.ytVideos).map(e => {
     const id = (e.match(/<yt:videoId>([^<]+)<\/yt:videoId>/) || [])[1];
@@ -138,6 +128,48 @@ async function fetchYtVideos(youtube, prev) {
     const published = (e.match(/<published>([^<]+)<\/published>/) || [])[1];
     return { id, title: decodeEntities(title), url: `https://www.youtube.com/watch?v=${id}`, date: published };
   });
+}
+
+// Скрейп вкладки «Видео» — запасной путь, когда RSS у свежего канала 404.
+async function scrapeYtChannelPage(channelId) {
+  const html = await fetchText(`https://www.youtube.com/channel/${channelId}/videos`);
+  const out = [];
+  const seen = new Set();
+  for (const chunk of html.split('"videoRenderer":{"videoId":"').slice(1)) {
+    const id = chunk.slice(0, chunk.indexOf('"'));
+    if (!/^[\w-]{6,}$/.test(id) || seen.has(id)) continue;
+    seen.add(id);
+    const t = chunk.slice(0, 3000).match(/"title":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"/);
+    out.push({
+      id,
+      title: t ? JSON.parse(`"${t[1]}"`) : '',
+      url: `https://www.youtube.com/watch?v=${id}`,
+      date: null,
+    });
+    if (out.length >= config.limits.ytVideos) break;
+  }
+  return out;
+}
+
+async function fetchYtVideos(youtube, prev) {
+  const channelId = await resolveChannelId(youtube);
+  if (!channelId) return null;
+  // 1) RSS канала → 2) RSS плейлиста загрузок (UU…) → 3) скрейп страницы канала.
+  const feeds = [`channel_id=${channelId}`, `playlist_id=UU${channelId.slice(2)}`];
+  for (const q of feeds) {
+    try {
+      return parseYtFeed(await fetchText(`https://www.youtube.com/feeds/videos.xml?${q}`));
+    } catch (err) {
+      if (!String(err.message).includes('HTTP 404')) throw err;
+    }
+  }
+  try {
+    const scraped = await scrapeYtChannelPage(channelId);
+    if (scraped.length) return scraped;
+  } catch (err) {
+    console.error('yt page scrape failed:', err.message);
+  }
+  return prev && prev.length ? prev : [];
 }
 
 function columnData(col) {
@@ -246,9 +278,9 @@ function renderIndex(theme) {
   .cta a { font-weight: bold; }
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
   @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-  .clogo { width: 45px; height: 45px; border-radius: 50%; margin-right: 10px; vertical-align: -13px; }
+  .clogo { width: 50px; height: 50px; border-radius: 50%; margin-right: 10px; vertical-align: -15px; }
   .zero { color: #FD2529; position: relative; display: inline-block; }
-  .zero::after { content: ''; position: absolute; left: 50%; top: -5%; height: 110%; width: 1.5px;
+  .zero::after { content: ''; position: absolute; left: 50%; top: 14%; height: 72%; width: 1.5px;
                  background: currentColor; margin-left: -0.75px; transform: rotate(28.7deg); }
   .about { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
   .chan { font-size: 12px; font-weight: normal; margin-left: 6px; }
@@ -333,7 +365,7 @@ function renderCv() {
 <body>
   <div>
     <h1>Карьера и достижения</h1>
-    <p>Здесь будет яркая страница-резюме: где работал, чем управлял и какие результаты приносил. Страница в работе.</p>
+    <p>Здесь будет страница-резюме: где работал, чем управлял и какие результаты приносил. Страница в работе.</p>
     <a href="/">← на главную</a>
   </div>
 </body>
