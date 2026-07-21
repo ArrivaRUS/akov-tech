@@ -288,6 +288,20 @@ function renderIndex(theme) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${escapeHtml(o.name)} — akov.tech</title>
 <meta name="description" content="${escapeHtml(o.tagline)}">
+<link rel="canonical" href="https://akov.tech/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="akov.tech">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="${escapeHtml(o.name)} — akov.tech">
+<meta property="og:description" content="${escapeHtml(o.tagline)}">
+<meta property="og:url" content="https://akov.tech/">
+<meta property="og:image" content="https://akov.tech/assets/og-image.png?v=${assetVer('og-image.png')}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${escapeHtml(o.name)} — akov.tech">
+<meta name="twitter:description" content="${escapeHtml(o.tagline)}">
+<meta name="twitter:image" content="https://akov.tech/assets/og-image.png?v=${assetVer('og-image.png')}">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=${assetVer('favicon-32.png')}">
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png?v=${assetVer('favicon-16.png')}">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=${assetVer('apple-touch-icon.png')}">
@@ -474,7 +488,12 @@ http.createServer((req, res) => {
   if (p === '/health') return send(res, 200, JSON.stringify({ ok: true }), 'application/json');
   if (p === '/favicon.ico') return serveAsset(req, res, '/assets/favicon-32.png');
   if (p === '/robots.txt') {
-    return send(res, 200, PREVIEW_KEY ? 'User-agent: *\nDisallow: /\n' : 'User-agent: *\nAllow: /\n', 'text/plain');
+    return send(res, 200, PREVIEW_KEY
+      ? 'User-agent: *\nDisallow: /\n'
+      : 'User-agent: *\nAllow: /\nSitemap: https://akov.tech/sitemap.xml\n', 'text/plain');
+  }
+  if (p === '/sitemap.xml' && !PREVIEW_KEY) {
+    return send(res, 200, '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://akov.tech/</loc></url></urlset>', 'application/xml');
   }
 
   // Закрытый предпросмотр: без ключа все видят заглушку.
