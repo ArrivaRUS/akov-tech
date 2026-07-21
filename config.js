@@ -13,7 +13,7 @@ module.exports = {
       about: 'технологии · AI · вайб-кодинг',
       accent: '#0A8BF5',
       tg: 'akovprotech',
-      youtube: null, // например 'https://www.youtube.com/@...' — появится, добавим
+      youtube: 'https://www.youtube.com/channel/UCxeM8QqzknBkl5lZ8v5Ta2w',
     },
     {
       slug: 'proinvest',
@@ -29,7 +29,7 @@ module.exports = {
       about: 'жизнь · спорт · семья',
       accent: '#5FE982',
       tg: 'akovprolife',
-      youtube: null,
+      youtube: 'https://www.youtube.com/channel/UCSqHAT42T05grNfRWY77mmw',
     },
   ],
   limits: { tgPosts: 8, ytVideos: 5 },

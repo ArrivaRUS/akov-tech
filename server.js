@@ -110,7 +110,8 @@ async function fetchTgPosts(handle) {
 // -------------------------------------------------------------- youtube ----
 async function resolveChannelId(youtube) {
   if (!youtube) return null;
-  if (/^UC[\w-]{20,}$/.test(youtube)) return youtube;
+  const direct = youtube.match(/(UC[\w-]{20,})/); // голый ID или URL вида /channel/UC...
+  if (direct) return direct[1];
   const url = youtube.startsWith('http') ? youtube : `https://www.youtube.com/${youtube.replace(/^@?/, '@')}`;
   const html = await fetchText(url);
   const m = html.match(/"channelId":"(UC[\w-]+)"/) || html.match(/channel\/(UC[\w-]+)/);
@@ -120,7 +121,13 @@ async function resolveChannelId(youtube) {
 async function fetchYtVideos(youtube) {
   const channelId = await resolveChannelId(youtube);
   if (!channelId) return null;
-  const xml = await fetchText(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`);
+  let xml;
+  try {
+    xml = await fetchText(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`);
+  } catch (err) {
+    if (String(err.message).includes('HTTP 404')) return []; // канал есть, видео ещё нет
+    throw err;
+  }
   const entries = xml.match(/<entry>[\s\S]*?<\/entry>/g) || [];
   return entries.slice(0, config.limits.ytVideos).map(e => {
     const id = (e.match(/<yt:videoId>([^<]+)<\/yt:videoId>/) || [])[1];
@@ -153,7 +160,7 @@ function renderColumn(col) {
   const tgUrl = `https://t.me/${col.tg}`;
   const ytBlock = col.youtube
     ? `<h3>YouTube <a class="chan" href="${escapeHtml(col.youtube)}" target="_blank" rel="noopener">канал →</a></h3>
-       ${renderList(yt, 'видео загружаются…')}`
+       ${renderList(yt, 'видео загружаются…', 'видео скоро появятся')}`
     : `<h3>YouTube</h3><p class="muted">канал скоро появится</p>`;
   return `
   <section class="col" id="${col.slug}">
@@ -240,7 +247,10 @@ function renderIndex(theme) {
   <div>
     <h1>${escapeHtml(o.name)}</h1>
     <p class="tagline">${escapeHtml(o.tagline)}</p>
-    <p class="social"><span>Telegram:</span> ${config.columns.map(c => `<a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`).join(' · ')} <span>· YouTube: скоро</span></p>
+    <p class="social"><span>Telegram:</span> ${config.columns.map(c => `<a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`).join(' · ')}
+      <span>· YouTube:</span> ${config.columns.map(c => c.youtube
+        ? `<a href="${escapeHtml(c.youtube)}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`
+        : `<span>${escapeHtml(c.title)} скоро</span>`).join(' · ')}</p>
   </div>
   <button class="theme-btn" id="themeBtn" type="button" title="Переключить тему" aria-label="Переключить тему"></button>
 </header>
