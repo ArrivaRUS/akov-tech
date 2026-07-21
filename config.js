@@ -37,7 +37,7 @@ module.exports = {
     {
       slug: 'prolife',
       title: 'ПроLife',
-      about: 'жизнь · спорт · семья',
+      about: 'жизнь · тревел · семья',
       accent: '#5FE982',
       tg: 'akovprolife',
       youtube: 'https://www.youtube.com/@AKov.ProLife',
