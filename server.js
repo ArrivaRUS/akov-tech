@@ -217,6 +217,14 @@ function columnData(col) {
 }
 
 // ------------------------------------------------------------ rendering ----
+// Нолик vibec0ding.ru как inline-SVG: браузеры принудительно перекрашивают
+// ТЕКСТ внутри посещённых ссылок (privacy-модель :visited), а SVG-обводку — нет,
+// поэтому нолик остаётся красным независимо от посещённости ссылки.
+const ZERO_SVG = '<svg class="z0" viewBox="0 0 100 130" aria-hidden="true"><ellipse cx="50" cy="65" rx="33" ry="50" fill="none" stroke="#FD2529" stroke-width="15"/><line x1="32" y1="98" x2="68" y2="32" stroke="#FD2529" stroke-width="11"/></svg>';
+
+function zeroize(html) {
+  return String(html).replace(/<span class="zero">0<\/span>/g, ZERO_SVG);
+}
 function renderList(items, loadingNote, emptyNote = 'пока пусто — скоро будет') {
   if (!items) return `<p class="muted">${loadingNote}</p>`;
   if (items.length === 0) return `<p class="muted">${emptyNote}</p>`;
@@ -266,7 +274,7 @@ function renderIndex(theme) {
   const links = [
     ...config.columns.map(c => `<li><a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a> — телеграм-канал: ${escapeHtml(c.about)}</li>`),
     ...config.columns.filter(c => c.youtube).map(c => `<li><a href="${escapeHtml(c.youtube)}" target="_blank" rel="noopener">${escapeHtml(c.title)} на YouTube</a> — видео: ${escapeHtml(c.about)}</li>`),
-    ...(o.community ? [`<li><a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${o.community.titleHtml || escapeHtml(o.community.title)}</a> — ${escapeHtml(o.community.note)}</li>`] : []),
+    ...(o.community ? [`<li><a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${zeroize(o.community.titleHtml || escapeHtml(o.community.title))}</a> — ${escapeHtml(o.community.note)}</li>`] : []),
     `<li><a href="${escapeHtml(o.github)}" target="_blank" rel="noopener">GitHub</a> — код и пет-проекты</li>`,
   ].join('');
   return `<!doctype html>
@@ -312,9 +320,7 @@ function renderIndex(theme) {
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
   @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
   .clogo { width: 50px; height: 50px; border-radius: 50%; margin-right: 10px; vertical-align: -15px; }
-  .zero { color: #FD2529; position: relative; display: inline-block; }
-  .zero::after { content: ''; position: absolute; left: 50%; top: 14%; height: 72%; width: 1.5px;
-                 background: currentColor; margin-left: -0.75px; transform: rotate(28.7deg); }
+  .z0 { width: .55em; height: .7em; display: inline-block; vertical-align: -0.02em; margin: 0 .03em; }
   .about { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
   .chan { font-size: 12px; font-weight: normal; margin-left: 6px; }
   .vrow { display: flex; gap: 8px; margin: 6px 0 4px; }
@@ -336,12 +342,12 @@ function renderIndex(theme) {
   <img class="avatar" src="/assets/avatar.png?v=${av}" alt="${escapeHtml(o.name)}">
   <div>
     <h1>${escapeHtml(o.name)}</h1>
-    <p class="tagline">${o.taglineHtml || escapeHtml(o.tagline)}</p>
+    <p class="tagline">${zeroize(o.taglineHtml || escapeHtml(o.tagline))}</p>
     <p class="social"><span>Telegram:</span> ${config.columns.map(c => `<a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`).join(' · ')}
       <span>· YouTube:</span> ${config.columns.map(c => c.youtube
         ? `<a href="${escapeHtml(c.youtube)}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`
         : `<span>${escapeHtml(c.title)} скоро</span>`).join(' · ')}
-      ${o.community ? `<span>· Сообщество:</span> <a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${o.community.titleHtml || escapeHtml(o.community.title)}</a>` : ''}</p>
+      ${o.community ? `<span>· Сообщество:</span> <a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${zeroize(o.community.titleHtml || escapeHtml(o.community.title))}</a>` : ''}</p>
   </div>
   <button class="theme-btn" id="themeBtn" type="button" title="Переключить тему" aria-label="Переключить тему"></button>
 </header>
