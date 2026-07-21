@@ -220,7 +220,7 @@ function columnData(col) {
 // Нолик vibec0ding.ru как inline-SVG: браузеры принудительно перекрашивают
 // ТЕКСТ внутри посещённых ссылок (privacy-модель :visited), а SVG-обводку — нет,
 // поэтому нолик остаётся красным независимо от посещённости ссылки.
-const ZERO_SVG = '<svg class="z0" viewBox="0 0 100 130" aria-hidden="true"><ellipse cx="50" cy="65" rx="33" ry="50" fill="none" stroke="#FD2529" stroke-width="15"/><line x1="32" y1="98" x2="68" y2="32" stroke="#FD2529" stroke-width="11"/></svg>';
+const ZERO_SVG = '<svg class="z0" viewBox="0 0 100 130" aria-hidden="true"><ellipse cx="50" cy="65" rx="33" ry="50" fill="none" stroke="#FD2529" stroke-width="15"/><line x1="15.5" y1="128" x2="84.5" y2="2" stroke="#FD2529" stroke-width="11"/></svg>';
 
 function zeroize(html) {
   return String(html).replace(/<span class="zero">0<\/span>/g, ZERO_SVG);
@@ -322,7 +322,7 @@ function renderIndex(theme) {
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
   @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
   .clogo { width: 50px; height: 50px; border-radius: 50%; margin-right: 10px; vertical-align: -15px; }
-  .z0 { width: .55em; height: .7em; display: inline-block; vertical-align: -0.02em; margin: 0 .03em; }
+  .z0 { width: .6em; height: .77em; display: inline-block; vertical-align: -0.06em; margin: 0 .03em; }
   .about { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
   .chan { font-size: 12px; font-weight: normal; margin-left: 6px; }
   .vrow { display: flex; gap: 8px; margin: 6px 0 4px; }
