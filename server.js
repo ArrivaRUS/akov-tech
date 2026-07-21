@@ -141,7 +141,7 @@ function columnData(col) {
   return {
     tg: cached(`tg:${col.tg}`, config.refreshMinutes.tg * 60_000, () => fetchTgPosts(col.tg)),
     yt: col.youtube
-      ? cached(`yt:${col.slug}`, config.refreshMinutes.yt * 60_000, () => fetchYtVideos(col.youtube))
+      ? cached(`yt:${col.slug}`, config.refreshMinutes.yt * 60_000, () => fetchYtVideos(col.youtubeId || col.youtube))
       : null,
   };
 }
@@ -184,6 +184,7 @@ function renderIndex(theme) {
   const links = [
     ...config.columns.map(c => `<li><a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a> — телеграм-канал: ${escapeHtml(c.about)}</li>`),
     ...config.columns.filter(c => c.youtube).map(c => `<li><a href="${escapeHtml(c.youtube)}" target="_blank" rel="noopener">${escapeHtml(c.title)} на YouTube</a> — видео: ${escapeHtml(c.about)}</li>`),
+    ...(o.community ? [`<li><a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${escapeHtml(o.community.title)}</a> — ${escapeHtml(o.community.note)}</li>`] : []),
     `<li><a href="${escapeHtml(o.github)}" target="_blank" rel="noopener">GitHub</a> — код и пет-проекты</li>`,
   ].join('');
   return `<!doctype html>
@@ -246,7 +247,7 @@ function renderIndex(theme) {
   <img class="avatar" src="/assets/avatar.png?v=${av}" alt="${escapeHtml(o.name)}">
   <div>
     <h1>${escapeHtml(o.name)}</h1>
-    <p class="tagline">${escapeHtml(o.tagline)}</p>
+    <p class="tagline">${o.taglineHtml || escapeHtml(o.tagline)}</p>
     <p class="social"><span>Telegram:</span> ${config.columns.map(c => `<a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`).join(' · ')}
       <span>· YouTube:</span> ${config.columns.map(c => c.youtube
         ? `<a href="${escapeHtml(c.youtube)}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`
