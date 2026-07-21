@@ -223,7 +223,11 @@ function columnData(col) {
 const ZERO_SVG = '<svg class="z0" viewBox="0 0 100 130" aria-hidden="true"><ellipse cx="50" cy="65" rx="33" ry="50" fill="none" stroke="#FD2529" stroke-width="15"/><line x1="15.5" y1="128" x2="84.5" y2="2" stroke="#FD2529" stroke-width="11"/></svg>';
 
 function zeroize(html) {
-  return String(html).replace(/<span class="zero">0<\/span>/g, ZERO_SVG);
+  // Домен целиком в неразрывном контейнере: на узких экранах переносится
+  // одним куском на новую строку, а не рвётся посреди слова.
+  return String(html)
+    .replace(/vibec<span class="zero">0<\/span>ding\.ru/g, `<span class="nowrap">vibec${ZERO_SVG}ding.ru</span>`)
+    .replace(/<span class="zero">0<\/span>/g, ZERO_SVG);
 }
 function renderList(items, loadingNote, emptyNote = 'пока пусто — скоро будет') {
   if (!items) return `<p class="muted">${loadingNote}</p>`;
@@ -321,10 +325,14 @@ function renderIndex(theme) {
   .cta a { font-weight: bold; }
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
   .lbl-short { display: none; }
+  .nowrap { white-space: nowrap; }
   @media (max-width: 900px) {
     .grid { grid-template-columns: 1fr; }
     .lbl-full { display: none; }
     .lbl-short { display: inline; }
+    header { display: block; position: relative; }
+    .avatar { display: block; margin-bottom: 14px; }
+    .theme-btn { position: absolute; top: 0; right: 0; }
   }
   .clogo { width: 50px; height: 50px; border-radius: 50%; margin-right: 10px; vertical-align: -15px; }
   .z0 { width: .6em; height: .77em; display: inline-block; vertical-align: -0.06em; margin: 0 .03em; }
