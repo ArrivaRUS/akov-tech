@@ -19,7 +19,7 @@ module.exports = {
     {
       slug: 'protech',
       title: 'ПроТех',
-      about: 'технологии · AI · вайб-кодинг',
+      about: 'продукт · AI · вайб-кодинг · гаджеты',
       accent: '#0A8BF5',
       tg: 'akovprotech',
       youtube: 'https://www.youtube.com/@AKov.ProTech',
