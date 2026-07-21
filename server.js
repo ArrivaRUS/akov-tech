@@ -69,8 +69,9 @@ async function fetchText(url, timeoutMs = 12000) {
 // stale-while-revalidate: отдаём из кэша мгновенно, обновляем в фоне.
 const cache = new Map(); // key -> { data, fetchedAt, refreshing }
 
-function cached(key, maxAgeMs, fetcher) {
+function cached(key, maxAge, fetcher) {
   const entry = cache.get(key);
+  const maxAgeMs = typeof maxAge === 'function' ? maxAge(entry ? entry.data : null) : maxAge;
   const fresh = entry && Date.now() - entry.fetchedAt < maxAgeMs;
   if (!fresh && !(entry && entry.refreshing)) {
     const prev = entry ? entry.data : null;
@@ -143,7 +144,9 @@ function columnData(col) {
   return {
     tg: cached(`tg:${col.tg}`, config.refreshMinutes.tg * 60_000, () => fetchTgPosts(col.tg)),
     yt: col.youtube
-      ? cached(`yt:${col.slug}`, config.refreshMinutes.yt * 60_000, prev => fetchYtVideos(col.youtubeId || col.youtube, prev))
+      // Пустая лента у свежего канала часто «мигает» 404 — перепроверяем каждые 5 минут.
+      ? cached(`yt:${col.slug}`, data => (data && data.length ? config.refreshMinutes.yt : 5) * 60_000,
+               prev => fetchYtVideos(col.youtubeId || col.youtube, prev))
       : null,
   };
 }
@@ -198,7 +201,7 @@ function renderIndex(theme) {
   const links = [
     ...config.columns.map(c => `<li><a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a> — телеграм-канал: ${escapeHtml(c.about)}</li>`),
     ...config.columns.filter(c => c.youtube).map(c => `<li><a href="${escapeHtml(c.youtube)}" target="_blank" rel="noopener">${escapeHtml(c.title)} на YouTube</a> — видео: ${escapeHtml(c.about)}</li>`),
-    ...(o.community ? [`<li><a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${escapeHtml(o.community.title)}</a> — ${escapeHtml(o.community.note)}</li>`] : []),
+    ...(o.community ? [`<li><a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${o.community.titleHtml || escapeHtml(o.community.title)}</a> — ${escapeHtml(o.community.note)}</li>`] : []),
     `<li><a href="${escapeHtml(o.github)}" target="_blank" rel="noopener">GitHub</a> — код и пет-проекты</li>`,
   ].join('');
   return `<!doctype html>
@@ -243,7 +246,10 @@ function renderIndex(theme) {
   .cta a { font-weight: bold; }
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
   @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-  .clogo { width: 30px; height: 30px; border-radius: 50%; margin-right: 9px; vertical-align: -7px; }
+  .clogo { width: 45px; height: 45px; border-radius: 50%; margin-right: 10px; vertical-align: -13px; }
+  .zero { color: #FD2529; position: relative; display: inline-block; }
+  .zero::after { content: ''; position: absolute; left: 50%; top: -5%; height: 110%; width: 1.5px;
+                 background: currentColor; margin-left: -0.75px; transform: rotate(28.7deg); }
   .about { color: var(--muted); font-size: 13px; margin: 0 0 4px; }
   .chan { font-size: 12px; font-weight: normal; margin-left: 6px; }
   .vrow { display: flex; gap: 8px; margin: 6px 0 4px; }
@@ -270,7 +276,7 @@ function renderIndex(theme) {
       <span>· YouTube:</span> ${config.columns.map(c => c.youtube
         ? `<a href="${escapeHtml(c.youtube)}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`
         : `<span>${escapeHtml(c.title)} скоро</span>`).join(' · ')}
-      ${o.community ? `<span>· Сообщество:</span> <a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${escapeHtml(o.community.title)}</a>` : ''}</p>
+      ${o.community ? `<span>· Сообщество:</span> <a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${o.community.titleHtml || escapeHtml(o.community.title)}</a>` : ''}</p>
   </div>
   <button class="theme-btn" id="themeBtn" type="button" title="Переключить тему" aria-label="Переключить тему"></button>
 </header>

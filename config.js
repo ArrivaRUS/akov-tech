@@ -3,10 +3,15 @@
 module.exports = {
   owner: {
     name: 'Алексей Ковалев',
-    tagline: 'AI-native CPO, ИИ-инфлюенсер. Основатель сообщества вайб-кодеров для начинающих vibec0ding.ru. Рассказываю про частный капитал и личные инвестиции простым языком — для тех, кто только начинает разбираться в финансах.',
-    taglineHtml: 'AI-native CPO, ИИ-инфлюенсер. Основатель <a href="https://vibec0ding.ru" target="_blank" rel="noopener">сообщества вайб-кодеров для начинающих vibec0ding.ru</a>.<br>Рассказываю про частный капитал и личные инвестиции простым языком — для тех, кто только начинает разбираться в финансах.',
+    tagline: 'AI-native CPO, ИИ-инфлюенсер. Основатель сообщества vibec0ding.ru. Рассказываю про частный капитал и личные инвестиции простым языком — для тех, кто только начинает разбираться в финансах.',
+    taglineHtml: 'AI-native CPO, ИИ-инфлюенсер. Основатель сообщества <a href="https://vibec0ding.ru" target="_blank" rel="noopener">vibec<span class="zero">0</span>ding.ru</a>.<br>Рассказываю про частный капитал и личные инвестиции простым языком — для тех, кто только начинает разбираться в финансах.',
     github: 'https://github.com/ArrivaRUS',
-    community: { url: 'https://vibec0ding.ru', title: 'vibec0ding.ru', note: 'сообщество вайб-кодеров для начинающих' },
+    community: {
+      url: 'https://vibec0ding.ru',
+      title: 'vibec0ding.ru',
+      titleHtml: 'vibec<span class="zero">0</span>ding.ru', // фирменный красный перечёркнутый ноль
+      note: 'сообщество вайб-кодеров для начинающих',
+    },
   },
   columns: [
     {
