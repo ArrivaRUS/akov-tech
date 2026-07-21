@@ -53,17 +53,18 @@ async function fetchText(url, timeoutMs = 12000) {
   const ctrl = new AbortController();
   const t = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
-    const res = await fetch(url, {
-      signal: ctrl.signal,
-      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; akov.tech aggregator)' },
-      redirect: 'follow',
-    });
+    const headers = { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36' };
+    // Обход EU-consent-страницы YouTube (Railway в EU): без этой куки отдаётся интерстишл.
+    if (/youtube\.com|ytimg\.com/.test(url)) headers.Cookie = 'SOCS=CAI; CONSENT=YES+cb';
+    const res = await fetch(url, { signal: ctrl.signal, headers, redirect: 'follow' });
     if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
     return await res.text();
   } finally {
     clearTimeout(t);
   }
 }
+
+const diag = {}; // диагностика последней попытки по каждому YouTube-каналу (видна в /data.json)
 
 // ---------------------------------------------------------------- cache ----
 // stale-while-revalidate: отдаём из кэша мгновенно, обновляем в фоне.
@@ -154,19 +155,25 @@ async function scrapeYtChannelPage(channelId) {
 async function fetchYtVideos(youtube, prev) {
   const channelId = await resolveChannelId(youtube);
   if (!channelId) return null;
+  const d = diag[channelId] = {};
   // 1) RSS канала → 2) RSS плейлиста загрузок (UU…) → 3) скрейп страницы канала.
   const feeds = [`channel_id=${channelId}`, `playlist_id=UU${channelId.slice(2)}`];
   for (const q of feeds) {
     try {
-      return parseYtFeed(await fetchText(`https://www.youtube.com/feeds/videos.xml?${q}`));
+      const items = parseYtFeed(await fetchText(`https://www.youtube.com/feeds/videos.xml?${q}`));
+      d[q.split('=')[0]] = `ok:${items.length}`;
+      if (items.length) return items;
     } catch (err) {
+      d[q.split('=')[0]] = err.message.slice(0, 60);
       if (!String(err.message).includes('HTTP 404')) throw err;
     }
   }
   try {
     const scraped = await scrapeYtChannelPage(channelId);
+    d.scrape = `ok:${scraped.length}`;
     if (scraped.length) return scraped;
   } catch (err) {
+    d.scrape = err.message.slice(0, 60);
     console.error('yt page scrape failed:', err.message);
   }
   return prev && prev.length ? prev : [];
@@ -428,7 +435,7 @@ http.createServer((req, res) => {
   if (p.startsWith('/assets/')) return serveAsset(req, res, p);
   if (p === '/data.json') {
     const dump = Object.fromEntries([...cache].map(([k, v]) => [k, { fetchedAt: v.fetchedAt, items: v.data ? v.data.length : null }]));
-    return send(res, 200, JSON.stringify(dump, null, 2), 'application/json');
+    return send(res, 200, JSON.stringify({ feeds: dump, ytDiag: diag }, null, 2), 'application/json');
   }
   return send(res, 302, '', 'text/plain', { Location: '/' });
 }).listen(PORT, '0.0.0.0', () => {
