@@ -28,7 +28,7 @@ module.exports = {
     {
       slug: 'proinvest',
       title: 'ПроИнвест',
-      about: 'частный капитал · инвестиции простым языком',
+      about: 'инвестиции · DeFi · частный капитал',
       accent: '#F47F19',
       tg: 'AKovProInvest',
       youtube: 'https://www.youtube.com/@AKov.ProInvest',
