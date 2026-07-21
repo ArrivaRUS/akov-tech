@@ -309,7 +309,7 @@ function renderIndex(theme) {
   h2 { font-size: 18px; margin: 0 0 2px; }
   h3 { font-size: 14px; margin: 22px 0 6px; }
   header { display: flex; gap: 18px; align-items: center; margin-bottom: 8px; }
-  .avatar { width: 76px; height: 76px; border-radius: 50%; flex-shrink: 0; border: 1px solid var(--border); object-fit: cover; }
+  .avatar { width: 87px; height: 87px; border-radius: 50%; flex-shrink: 0; border: 1px solid var(--border); object-fit: cover; }
   .tagline { color: var(--muted); margin: 0 0 6px; }
   .social { font-size: 13px; margin: 0; }
   .social span { color: var(--muted); }
