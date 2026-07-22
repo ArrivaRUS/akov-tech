@@ -43,8 +43,12 @@ function stripTags(html) {
   );
 }
 
+// Строка-приветствие («👋 Привет, коллеги-инвесторы!») — не заголовок поста.
+const GREETING_RE = /^[^a-zа-яё]*((всем|друзья)[\s,!]+)?(привет(ствую)?|здравствуй(те)?|добрый\s+(день|вечер)|доброе\s+утро|доброго\s+(дня|вечера|утра|времени)|салют|hi|hello|hey)(?![a-zа-яё])/i;
+
 function firstLine(text, max = 110) {
-  const line = text.split('\n').map(l => l.trim()).find(l => l.length > 0) || '';
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  const line = lines.find(l => !GREETING_RE.test(l)) || lines[0] || '';
   const clean = line.replace(/\s+/g, ' ');
   return clean.length > max ? clean.slice(0, max - 1).trimEnd() + '…' : clean;
 }
