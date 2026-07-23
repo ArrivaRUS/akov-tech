@@ -474,12 +474,15 @@ function serveAsset(req, res, urlPath) {
   const types = { '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.svg': 'image/svg+xml', '.webp': 'image/webp' };
   const type = types[path.extname(name).toLowerCase()];
   if (!type || !fs.existsSync(file)) { res.writeHead(404); return res.end('Not found'); }
-  res.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'public, max-age=3600' });
+  // Ссылки на статику версионированы (?v=mtime), поэтому кэшировать можно долго.
+  res.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'public, max-age=604800' });
   fs.createReadStream(file).pipe(res);
 }
 
 function send(res, status, body, type = 'text/html; charset=utf-8', extra = {}) {
-  const headers = { 'Content-Type': type, ...extra };
+  // Перед сайтом стоит CDN (Яндекс): без Cache-Control он кэширует HTML на сутки+,
+  // и посетители видят устаревшие ленты. no-cache = отдавать только после проверки у origin.
+  const headers = { 'Content-Type': type, 'Cache-Control': 'no-cache', ...extra };
   if (PREVIEW_KEY) headers['X-Robots-Tag'] = 'noindex, nofollow';
   res.writeHead(status, headers);
   res.end(body);
