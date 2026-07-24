@@ -10,6 +10,7 @@ const config = require('./config');
 const PORT = process.env.PORT || 3000;
 const PREVIEW_KEY = (process.env.PREVIEW_KEY || '').trim();
 const PLACEHOLDER = path.join(__dirname, 'placeholder.html');
+const BOOT_DATE = new Date().toISOString().slice(0, 10); // дата деплоя — для <lastmod> в sitemap
 
 // ---------------------------------------------------------------- utils ----
 const MONTHS_RU = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
@@ -500,7 +501,7 @@ http.createServer((req, res) => {
       : 'User-agent: *\nAllow: /\nSitemap: https://akov.tech/sitemap.xml\n', 'text/plain');
   }
   if (p === '/sitemap.xml' && !PREVIEW_KEY) {
-    return send(res, 200, '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://akov.tech/</loc></url></urlset>', 'application/xml');
+    return send(res, 200, `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://akov.tech/</loc><lastmod>${BOOT_DATE}</lastmod><changefreq>daily</changefreq></url></urlset>`, 'application/xml');
   }
 
   // Закрытый предпросмотр: без ключа все видят заглушку.
