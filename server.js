@@ -504,6 +504,13 @@ http.createServer((req, res) => {
     return send(res, 200, `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://akov.tech/</loc><lastmod>${BOOT_DATE}</lastmod><changefreq>daily</changefreq></url></urlset>`, 'application/xml');
   }
 
+  // Подтверждение прав в Яндекс.Вебмастере (метод «HTML-файл»).
+  if (p === '/yandex_ef8d9667392682cf.html') {
+    return send(res, 200,
+      '<html>\n    <head>\n        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\n    </head>\n    <body>Verification: ef8d9667392682cf</body>\n</html>\n',
+      'text/html; charset=UTF-8');
+  }
+
   // Закрытый предпросмотр: без ключа все видят заглушку.
   if (PREVIEW_KEY) {
     const authed = parseCookies(req).pk === PREVIEW_KEY;
