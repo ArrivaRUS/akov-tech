@@ -276,6 +276,12 @@ function assetVer(name) {
   catch { return 0; }
 }
 
+// Ссылка на иконку с версией в ПУТИ (а не в ?query): Safari кэширует фавиконки
+// по «голому» пути и игнорирует query-строку, поэтому новый путь — единственный
+// надёжный способ заставить его перечитать иконку. serveAsset берёт basename,
+// так что лишний сегмент /vNNN/ отбрасывается и файл отдаётся как обычно.
+function iconHref(name) { return `/assets/v${assetVer(name)}/${name}`; }
+
 function renderIndex(theme) {
   const o = config.owner;
   const av = assetVer('avatar.png');
@@ -307,9 +313,10 @@ function renderIndex(theme) {
 <meta name="twitter:title" content="${escapeHtml(o.name)} — akov.tech">
 <meta name="twitter:description" content="${escapeHtml(o.tagline)}">
 <meta name="twitter:image" content="https://akov.tech/assets/og-image.png?v=${assetVer('og-image.png')}">
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png?v=${assetVer('favicon-32.png')}">
-<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16.png?v=${assetVer('favicon-16.png')}">
-<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png?v=${assetVer('apple-touch-icon.png')}">
+<link rel="icon" type="image/png" sizes="32x32" href="${iconHref('favicon-32.png')}">
+<link rel="icon" type="image/png" sizes="16x16" href="${iconHref('favicon-16.png')}">
+<link rel="icon" sizes="192x192" href="${iconHref('favicon-192.png')}">
+<link rel="apple-touch-icon" href="${iconHref('apple-touch-icon.png')}">
 <style>
   :root {
     --bg: #fff; --fg: #000; --link: #0000EE; --visited: #551A8B;
@@ -437,8 +444,8 @@ function renderCv() {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Карьера и достижения — akov.tech</title>
 <meta name="robots" content="noindex">
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
-<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="${iconHref('favicon-32.png')}">
+<link rel="apple-touch-icon" href="${iconHref('apple-touch-icon.png')}">
 <style>
   body { margin: 0; min-height: 100svh; display: flex; align-items: center; justify-content: center; text-align: center;
          background: radial-gradient(1200px 600px at 50% -10%, #1b2540 0%, #0b0f17 60%);
