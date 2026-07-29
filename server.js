@@ -47,11 +47,16 @@ function stripTags(html) {
 // Строка-приветствие («👋 Привет, коллеги-инвесторы!») — не заголовок поста.
 const GREETING_RE = /^[^a-zа-яё]*((всем|друзья)[\s,!]+)?(привет(ствую)?|здравствуй(те)?|добрый\s+(день|вечер)|доброе\s+утро|доброго\s+(дня|вечера|утра|времени)|салют|hi|hello|hey)(?![a-zа-яё])/i;
 
+// Эмодзи в постах — декор («👋 Навайбкодил…»); в заголовках ленты им не место.
+// Extended_Pictographic + модификаторы тона кожи, VS16, ZWJ, keycap и тег-символы.
+const EMOJI_RE = /[\p{Extended_Pictographic}\u{1F3FB}-\u{1F3FF}\u{FE0F}\u{200D}\u{20E3}\u{E0020}-\u{E007F}]/gu;
+
 function firstLine(text, max = 110) {
-  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  const lines = text.split('\n')
+    .map(l => l.replace(EMOJI_RE, '').replace(/\s+/g, ' ').trim())
+    .filter(l => l.length > 0); // строка из одних эмодзи заголовком быть не может
   const line = lines.find(l => !GREETING_RE.test(l)) || lines[0] || '';
-  const clean = line.replace(/\s+/g, ' ');
-  return clean.length > max ? clean.slice(0, max - 1).trimEnd() + '…' : clean;
+  return line.length > max ? line.slice(0, max - 1).trimEnd() + '…' : line;
 }
 
 async function fetchText(url, timeoutMs = 12000) {
