@@ -352,6 +352,8 @@ function renderIndex(theme) {
                background: none; border: 1px solid var(--border); color: var(--fg);
                padding: 6px 9px; cursor: pointer; }
   .theme-btn:hover { background: var(--box); }
+  .theme-btn .sl { opacity: .55; margin: 0 3px; }
+  .theme-btn .dim { opacity: .35; }
   .cta { border: 1px solid var(--border); background: var(--box); padding: 12px 16px; margin: 18px 0 26px; }
   .cta a { font-weight: bold; }
   .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
@@ -363,7 +365,7 @@ function renderIndex(theme) {
     .lbl-short { display: inline; }
     header { display: block; position: relative; }
     .avatar { float: left; margin: 0 16px 8px 0; }
-    h1, .tagline { padding-right: 46px; } /* не заезжать под кнопку темы */
+    h1, .tagline { padding-right: 66px; } /* не заезжать под кнопку темы ☀/☾ */
     .tagline2, .social { padding-right: 0; clear: left; margin-top: 10px; }
     .sgroup { display: block; margin-bottom: 2px; }
     .sep { display: none; }
@@ -404,7 +406,7 @@ function renderIndex(theme) {
         ? `<a href="${escapeHtml(c.youtube)}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`
         : `<span>${escapeHtml(c.title)} скоро</span>`).join(' · ')}</span>${o.community ? `<span class="sep"> · </span><span class="sgroup"><span>Сообщество:</span> <a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${zeroize(o.community.titleHtml || escapeHtml(o.community.title))}</a></span>` : ''}</p>
   </div>
-  <button class="theme-btn" id="themeBtn" type="button" title="Переключить тему" aria-label="Переключить тему"></button>
+  <button class="theme-btn" id="themeBtn" type="button" title="Переключить тему" aria-label="Переключить тему"><span id="tSun">☀</span><span class="sl">/</span><span id="tMoon">☾</span></button>
 </header>
 <div class="cta">→ <a href="/cv">Карьера и достижения</a> — где работал и что сделал: обо мне для работодателей и партнёров</div>
 <main class="grid">
@@ -426,7 +428,12 @@ ${o.email ? `<div class="contact">
     var manual = document.documentElement.getAttribute('data-theme');
     return manual || (mq.matches ? 'dark' : 'light');
   }
-  function paint() { btn.textContent = effective() === 'dark' ? '☀' : '☾'; }
+  var sun = document.getElementById('tSun'), moon = document.getElementById('tMoon');
+  function paint() {
+    var dark = effective() === 'dark';
+    sun.className = dark ? 'dim' : '';   // активная тема — ярко, неактивная — приглушена
+    moon.className = dark ? '' : 'dim';
+  }
   btn.addEventListener('click', function () {
     var next = effective() === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
