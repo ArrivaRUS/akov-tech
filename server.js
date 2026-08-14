@@ -419,7 +419,7 @@ ${cols}
 ${o.email ? `<div class="contact">
   <a class="mailbtn" href="mailto:${escapeHtml(o.email)}"><img class="mailico" src="/assets/favicon-32.png?v=${assetVer('favicon-32.png')}" alt="">Написать мне</a>
 </div>` : ''}
-<footer>© ${new Date().getFullYear()} akov.tech</footer>
+<footer>© ${new Date().getFullYear()} akov.tech · <a href="https://arrivarus.wfolio.pro" target="_blank" rel="noopener">фотопортфолио</a></footer>
 <script>
 (function () {
   var btn = document.getElementById('themeBtn');
