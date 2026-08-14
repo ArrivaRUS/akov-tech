@@ -296,7 +296,7 @@ function renderIndex(theme) {
     ...config.columns.filter(c => c.youtube).map(c => `<li><a href="${escapeHtml(c.youtube)}" target="_blank" rel="noopener">${escapeHtml(c.title)} на YouTube</a> — видео: ${escapeHtml(c.about)}</li>`),
     ...(o.community ? [`<li><a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${zeroize(o.community.titleHtml || escapeHtml(o.community.title))}</a> — ${escapeHtml(o.community.note)}</li>`] : []),
     `<li><a href="${escapeHtml(o.github)}" target="_blank" rel="noopener">GitHub</a> — код и пет-проекты</li>`,
-    ...(o.photos ? [`<li><a href="${escapeHtml(o.photos)}" target="_blank" rel="noopener">Фотопортфолио</a> — мои фотографии</li>`] : []),
+    ...(o.photos ? [`<li><a href="${escapeHtml(o.photos)}" target="_blank" rel="noopener">Фотопортфолио</a> — мои фотоальбомы</li>`] : []),
   ].join('');
   return `<!doctype html>
 <html lang="ru"${theme ? ` data-theme="${theme}"` : ''}>
