@@ -7,6 +7,7 @@ module.exports = {
     taglineHtml1: 'AI-native CPO, ИИ-инфлюенсер. Основатель сообщества vibec<span class="zero">0</span>ding.ru.',
     taglineHtml2: 'Рассказываю про ИИ, бизнес, продуктовое управление и инвестиции простым языком.',
     github: 'https://github.com/ArrivaRUS',
+    photos: 'https://arrivarus.wfolio.pro',
     email: 'ArrivaRUS@gmail.com',
     community: {
       url: 'https://vibec0ding.ru',

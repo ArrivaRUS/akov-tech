@@ -296,6 +296,7 @@ function renderIndex(theme) {
     ...config.columns.filter(c => c.youtube).map(c => `<li><a href="${escapeHtml(c.youtube)}" target="_blank" rel="noopener">${escapeHtml(c.title)} на YouTube</a> — видео: ${escapeHtml(c.about)}</li>`),
     ...(o.community ? [`<li><a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${zeroize(o.community.titleHtml || escapeHtml(o.community.title))}</a> — ${escapeHtml(o.community.note)}</li>`] : []),
     `<li><a href="${escapeHtml(o.github)}" target="_blank" rel="noopener">GitHub</a> — код и пет-проекты</li>`,
+    ...(o.photos ? [`<li><a href="${escapeHtml(o.photos)}" target="_blank" rel="noopener">Фотопортфолио</a> — мои фотографии</li>`] : []),
   ].join('');
   return `<!doctype html>
 <html lang="ru"${theme ? ` data-theme="${theme}"` : ''}>
@@ -419,7 +420,7 @@ ${cols}
 ${o.email ? `<div class="contact">
   <a class="mailbtn" href="mailto:${escapeHtml(o.email)}"><img class="mailico" src="/assets/favicon-32.png?v=${assetVer('favicon-32.png')}" alt="">Написать мне</a>
 </div>` : ''}
-<footer>© ${new Date().getFullYear()} akov.tech · <a href="https://arrivarus.wfolio.pro" target="_blank" rel="noopener">фотопортфолио</a></footer>
+<footer>© ${new Date().getFullYear()} akov.tech</footer>
 <script>
 (function () {
   var btn = document.getElementById('themeBtn');
