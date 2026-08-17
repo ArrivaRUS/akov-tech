@@ -560,4 +560,8 @@ http.createServer((req, res) => {
   console.log(`akov.tech on :${PORT}${PREVIEW_KEY ? ' (preview mode: gated)' : ''}`);
   // Прогреваем кэш при старте.
   config.columns.forEach(columnData);
+  // И держим его тёплым без визитов: обновление лент было чисто ленивым (по запросу),
+  // поэтому при нулевом трафике первый посетитель получал многочасовой снимок (SWR).
+  // Таймер дёргает columnData; тот сам решает по TTL, пора ли ходить в TG/YouTube.
+  setInterval(() => config.columns.forEach(columnData), 5 * 60_000);
 });
