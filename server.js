@@ -405,7 +405,7 @@ function renderIndex(theme) {
     ${o.taglineHtml2 ? `<p class="tagline tagline2">${zeroize(o.taglineHtml2)}</p>` : ''}
     <p class="social"><span class="sgroup"><span>Telegram:</span> ${config.columns.map(c => `<a href="https://t.me/${c.tg}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`).join(' · ')}</span><span class="sep"> · </span><span class="sgroup"><span>YouTube:</span> ${config.columns.map(c => c.youtube
         ? `<a href="${escapeHtml(c.youtube)}" target="_blank" rel="noopener">${escapeHtml(c.title)}</a>`
-        : `<span>${escapeHtml(c.title)} скоро</span>`).join(' · ')}</span>${o.community ? `<span class="sep"> · </span><span class="sgroup"><span>Сообщество:</span> <a href="${escapeHtml(o.community.url)}" target="_blank" rel="noopener">${zeroize(o.community.titleHtml || escapeHtml(o.community.title))}</a></span>` : ''}</p>
+        : `<span>${escapeHtml(c.title)} скоро</span>`).join(' · ')}</span>${o.photos ? `<span class="sep"> · </span><span class="sgroup"><span>Мои фото:</span> <a href="${escapeHtml(o.photos)}" target="_blank" rel="noopener">wfolio.pro</a></span>` : ''}</p>
   </div>
   <button class="theme-btn" id="themeBtn" type="button" title="Переключить тему" aria-label="Переключить тему"><span id="tSun">☀</span><span class="sl">/</span><span id="tMoon">☾</span></button>
 </header>
