@@ -46,5 +46,5 @@ module.exports = {
     },
   ],
   limits: { tgPosts: 8, ytVideos: 5 },
-  refreshMinutes: { tg: 30, yt: 60 },
+  refreshMinutes: { tg: 5, yt: 10 },
 };

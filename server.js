@@ -563,5 +563,5 @@ http.createServer((req, res) => {
   // И держим его тёплым без визитов: обновление лент было чисто ленивым (по запросу),
   // поэтому при нулевом трафике первый посетитель получал многочасовой снимок (SWR).
   // Таймер дёргает columnData; тот сам решает по TTL, пора ли ходить в TG/YouTube.
-  setInterval(() => config.columns.forEach(columnData), 5 * 60_000);
+  setInterval(() => config.columns.forEach(columnData), 60_000);
 });
